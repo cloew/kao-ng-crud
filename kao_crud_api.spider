@@ -1,0 +1,88 @@
+use angular;
+    
+angular.module('kao.crud.api', [])
+    .provider('CrudParamFromRouteConfig', fn() {
+        var paramToConfig = {};
+        var CrudParamFromRoute = fn(pathConfigs) {
+            this.pathConfigs = {};
+            for config in pathConfigs {
+                this.pathConfigs[config.path] = config.param;
+            }
+        };
+        CrudParamFromRoute.prototype.get = fn($injector) {
+            return $injector.invoke(fn($route, $routeParams) {
+                return $routeParams[this.pathConfigs[$route.current.$$route.path]];
+            }, this);
+        };
+        
+        this.register = fn(param, pathConfigs) {
+            paramToConfig[param] = new CrudParamFromRoute(pathConfigs);
+        };
+        this.forParam = fn(param) {
+            return paramToConfig[param];
+        };
+        this.$get = fn() {
+            return this;
+        };
+    })
+    .provider('CrudApiConfig', fn() {
+        var crudConfigs = [];
+        this.add = fn(apiUrl, dataType, nested) {
+            crudConfigs.push({apiUrl: apiUrl, dataType: dataType, nested: nested});
+        };
+        this.$get = fn() {
+            return crudConfigs;
+        };
+    })
+    .factory('NestedRouteService', fn($injector) {
+        this.getUrl = fn(apiUrl, nested) {
+            var tempUrl = apiUrl;
+            if nested {
+                for config in nested {
+                    tempUrl = tempUrl.replace(':'+config.param, config.provider.get($injector));
+                }
+            }
+            return tempUrl;
+        };
+        return this;
+    })
+    .factory('CrudApi', fn($http, NestedRouteService) {
+        fn CrudApi(apiUrl, nested) {
+            this.apiUrl = apiUrl;
+            this.nested = nested;
+        }
+        CrudApi.prototype.getBaseUrl = fn() {
+            return NestedRouteService.getUrl(this.apiUrl, this.nested);
+        };
+        CrudApi.prototype.getAll = fn() {
+            return $http.get(this.getBaseUrl());
+        };
+        CrudApi.prototype.create = fn(record) {
+            return $http.post(this.getBaseUrl(), record);
+        };
+        CrudApi.prototype.get = fn(recordId) {
+            return $http.get(this.getBaseUrl()+'/'+recordId);
+        };
+        CrudApi.prototype.update = fn(record) {
+            return $http.put(this.getBaseUrl()+'/'+record.id, record);
+        };
+        CrudApi.prototype.delete = fn(recordId) {
+            return $http.delete(this.getBaseUrl()+'/'+recordId);
+        };
+        return CrudApi;
+    })
+    .factory('CrudApiService', fn($route, CrudApi, CrudApiConfig) {
+        var dataTypeToApi = {};
+        var service = {
+            addCrud: fn(apiUrl, dataType, nested) {
+                dataTypeToApi[dataType] = new CrudApi(apiUrl, nested);
+            },
+            getApiFor: fn(dataType) {
+                return dataTypeToApi[dataType];
+            }
+        };
+        for config in CrudApiConfig {
+            service.addCrud(config.apiUrl, config.dataType, config.nested);
+        }
+        return service;
+    });

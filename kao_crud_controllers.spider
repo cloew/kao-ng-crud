@@ -1,0 +1,155 @@
+use angular;
+use console;
+
+angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.api', 'kao.crud.frontend', 'kao.loading'])
+    .directive('kaoCrudList', fn() {
+      return {
+        restrict: 'E',
+        replace: true,
+        template:  '<div class="col-md-8 col-md-push-2" style="text-align:center;">
+                        <list-header class="col-md-12"></list-header>
+                        <loading-div loading="list">
+                            <model-table></model-table>
+                        </loading-div>
+                    </div>',
+        scope: {
+            type: '@'
+        },
+        controller: fn ($scope, $location, CrudApiService, FrontEndCrudService, LoadingTrackerService) {
+            var frontEndCrud;
+            if $scope.type {
+                frontEndCrud = FrontEndCrudService.getFrontEndFor($scope.type);
+            } else {
+                frontEndCrud = FrontEndCrudService.getCurrentCrud();
+            }
+            var crudApi = CrudApiService.getApiFor(frontEndCrud.name);
+            var tracker =  LoadingTrackerService.get('list');
+            
+            $scope.records = [];
+            $scope.dataType = frontEndCrud.name;
+            $scope.pluralDataType = frontEndCrud.pluralName;
+            $scope.newUrl = '#'+frontEndCrud.getNewUrl();
+            $scope.tableDirective = frontEndCrud.tableDirective;
+            
+            $scope.goTo = fn(path) {
+                $location.path(path);
+            };
+            
+            $scope.getRecordEditUrl = fn(record) {
+                return '#'+frontEndCrud.getEditUrl(record.id);
+            };
+            
+            $scope.delete = fn(id) {
+                crudApi.delete(id).success(fn(data) {
+                    $scope.getRecords();
+                }).error(fn(error) {
+                    console.log(error);
+                });
+            };
+            
+            $scope.getRecords = fn() {
+                tracker.load(crudApi.getAll()).success(fn(data) {
+                    $scope.records = data.records;
+                }).error(fn(error) {
+                    console.log(error);
+                });
+            };
+            $scope.getRecords();
+        }
+      };
+    })
+    .directive('kaoCrudNew', fn() {
+      return {
+        restrict: 'E',
+        replace: true,
+        template:  '<div class="col-md-8 col-md-push-2" style="text-align:center;">
+                        <new-header class="col-md-12"></new-header>
+                        <model-form></model-form>
+                    </div>',
+        scope: {
+            type: '@'
+        },
+        controller: fn ($scope, $location, CrudApiService, FrontEndCrudService, LoadingTrackerService) {
+            var frontEndCrud;
+            if $scope.type {
+                frontEndCrud = FrontEndCrudService.getFrontEndFor($scope.type);
+            } else {
+                frontEndCrud = FrontEndCrudService.getCurrentCrud();
+            }
+            var crudApi = CrudApiService.getApiFor(frontEndCrud.name);
+            $scope.record = {};
+            $scope.dataType = frontEndCrud.name;
+            $scope.formDirective = frontEndCrud.formDirective;
+            $scope.listUrl = '#'+frontEndCrud.getListUrl();
+            console.log($scope.listUrl);
+            var tracker = LoadingTrackerService.get('saving');
+            
+            $scope.save = fn() {
+                tracker.load(crudApi.create($scope.record)).success(fn(data) {
+                    $location.path(frontEndCrud.getEditUrl(data.record.id));
+                }).error(fn(error) {
+                    console.log(error);
+                });
+            };
+        }
+      };
+    })
+    .directive('kaoCrudEdit', fn() {
+      return {
+        restrict: 'E',
+        replace: true,
+        template:  '<div class="col-md-8 col-md-push-2" style="text-align:center;">
+                        <edit-header class="col-md-12"></edit-header>
+                        <model-form></model-form>
+                        <dynamic-directive directive="{{afterEditDirective}}"></dynamic-directive>
+                    </div>',
+        scope: {
+            type: '@'
+        },
+        controller: fn ($scope, $location, $routeParams, CrudApiService, FrontEndCrudService, LoadingTrackerService) {
+            var frontEndCrud;
+            if ($scope.type) {
+                frontEndCrud = FrontEndCrudService.getFrontEndFor($scope.type);
+            } else {
+                frontEndCrud = FrontEndCrudService.getCurrentCrud();
+            }
+            var crudApi = CrudApiService.getApiFor(frontEndCrud.name);
+            $scope.record = {};
+            $scope.dataType = frontEndCrud.name;
+            $scope.formDirective = frontEndCrud.formDirective;
+            $scope.afterEditDirective = frontEndCrud.afterEditDirective;
+            $scope.listUrl = '#'+frontEndCrud.getListUrl();
+            
+            var tracker = LoadingTrackerService.get('saving');
+            
+            $scope.goTo = fn(path) {
+                $location.path(path);
+            };
+            
+            $scope.save = fn() {
+                tracker.load(crudApi.update($scope.record)).success(fn(data) {
+                    $scope.record = data.record;
+                }).error(fn(error) {
+                    console.log(error);
+                });
+            };
+            
+            $scope.delete = fn(id) {
+                crudApi.delete($routeParams.id).success(fn(data) {
+                    $scope.goTo(frontEndCrud.getListUrl());
+                }).error(fn(error) {
+                    console.log(error);
+                });
+            };
+            
+            $scope.getRecord = fn() {
+                crudApi.get($routeParams.id).success(fn(data) {
+                    $scope.record = data.record;
+                }).error(fn(error) {
+                    console.log(error);
+                });
+            };
+            $scope.getRecord();
+        }
+      };
+    });

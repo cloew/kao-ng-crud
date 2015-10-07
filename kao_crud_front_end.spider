@@ -1,0 +1,85 @@
+use angular;
+use console;
+
+angular.module('kao.crud.frontend', ['kao.crud.api', 'kao.utils', 'kao.loading'])
+    .provider('FrontEndCrudConfig', fn() {
+        var crudConfigs = [];
+        this.add = fn(config) {
+            crudConfigs.push(config);
+        };
+        this.$get = fn() {
+            return crudConfigs;
+        };
+    })
+    .factory('FrontEndCrud', fn(NestedRouteService) {
+        fn CrudFrontEnd(config) {
+            this.name = config.name;
+            this.pluralName = config.pluralName;
+            if !this.pluralName && this.name {
+                this.pluralName = this.name + 's';
+            }
+            this.nested = config.nested;
+            this.primaryPaths = config.primaryPaths;
+            this.listUrl = config.listUrl;
+            this.newUrl = config.newUrl;
+            this.editUrl = config.editUrl;
+            
+            this.tableDirective = config.tableDirective;
+            this.formDirective = config.formDirective;
+            this.afterEditDirective = config.afterEditDirective;
+        }
+        CrudFrontEnd.prototype.getProperNestedConfig = fn(varName) {
+            var nested = this.nested;
+            var newNested = [];
+            
+            if nested {
+                for config in nested {
+                    if (config[varName]) {
+                        config = {param: config[varName], provider: config.provider};
+                    }
+                    newNested.push(config);
+                }
+            }
+            return newNested;
+        };
+        CrudFrontEnd.prototype.getListUrl = fn() {
+            return NestedRouteService.getUrl(this.listUrl, this.getProperNestedConfig('list'));
+        };
+        CrudFrontEnd.prototype.getNewUrl = fn() {
+            return NestedRouteService.getUrl(this.newUrl, this.getProperNestedConfig('new'));
+        };
+        CrudFrontEnd.prototype.getEditUrl = fn(id) {
+            return NestedRouteService.getUrl(this.editUrl, this.getProperNestedConfig('edit')).replace(':id', id);
+        };
+        return CrudFrontEnd;
+    })
+    .factory('FrontEndCrudService', fn($route, FrontEndCrud, FrontEndCrudConfig) {
+        var dataTypeToWrapper = {};
+        var pathToWrappers = {};
+        var service = {
+            addCrud: fn(config) {
+                dataTypeToWrapper[config.name] = config;
+                var paths;
+                if config.primaryPaths {
+                    paths = config.primaryPaths;
+                } else {
+                    paths = [config.listUrl, config.newUrl, config.editUrl];
+                }
+                for path in paths {
+                    if path? {
+                        pathToWrappers[path] = config;
+                    }
+                }
+            },
+            getCurrentCrud: fn() {
+                return pathToWrappers[$route.current.$$route.path];
+            },
+            getFrontEndFor: fn(dataType) {
+                return dataTypeToWrapper[dataType];
+            }
+        };
+        for config in FrontEndCrudConfig {
+            service.addCrud( new FrontEndCrud(config));
+        }
+        return service;
+    });

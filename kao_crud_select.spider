@@ -1,0 +1,53 @@
+use angular;
+use console;
+
+angular.module('kao.crud.select', ['kao.crud.api'])
+    .directive('kaoSelect', fn() {
+        return {
+            restrict: 'E',
+            replace: true,
+            scope: {
+              model: '=',
+              url: '@',
+              displayField: '@'
+            },
+            controller: fn($scope, $http) {
+                $scope.records = [];
+            
+                $scope.getRecords = fn() {
+                    $http.get($scope.url).success(fn(data) {
+                        $scope.records = data.records;
+                    }).error(fn(error) {
+                        console.log(error);
+                    });
+                };
+                $scope.getRecords();
+            },
+            template: '<select ng-options="record as record[displayField] for record in records track by record.id" ng-model="model" />'
+        };
+    })
+    .directive('modelSelect', fn() {
+        return {
+            restrict: 'E',
+            replace: true,
+            scope: {
+              model: '=',
+              type: '@',
+              displayField: '@'
+            },
+            controller: fn($scope, CrudApiService) {
+                var crudApi = CrudApiService.getApiFor($scope.type);
+                $scope.records = [];
+            
+                $scope.getRecords = fn() {
+                    crudApi.getAll().success(fn(data) {
+                        $scope.records = data.records;
+                    }).error(fn(error) {
+                        console.log(error);
+                    });
+                };
+                $scope.getRecords();
+            },
+            template: '<select ng-options="record as record[displayField] for record in records track by record.id" ng-model="model" />'
+        };
+    });
