@@ -2,15 +2,30 @@ use angular;
 use console;
 
 angular.module('kao.crud.record', ['kao.crud.api', 'kao.crud.frontend', 'kao.loading', 'kao.utils'])
+    .service('KaoRecords', fn(KaoRecord, KaoDefer) {
+        this.all = fn(type, crudApi) {
+            var deferred = KaoDefer();
+            crudApi.getAll().success(fn(data) {
+                var records = [];
+                for recordData in data.records {
+                    records <- new KaoRecord(type, recordData);
+                }
+                deferred.resolve(records);
+            }).error(fn(error) {
+                deferred.reject(error);
+            });
+            return deferred.promise;
+        };
+    })
     .factory('KaoRecord', fn($routeParams, CrudApiService, FrontEndCrudService, KaoPromise) {
-        var KaoRecord = fn(dataType) {
+        var KaoRecord = fn(dataType, data) {
             if dataType? {
                 this.frontEndCrud = FrontEndCrudService.getFrontEndFor(dataType);
             } else {
                 this.frontEndCrud = FrontEndCrudService.getCurrentCrud();
             }
             this.crudApi = CrudApiService.getApiFor(this.frontEndCrud.name);
-            this.data = {};
+            this.data = data ?? {};
         };
           
         KaoRecord.prototype.promiseBuilder = fn(promise) {

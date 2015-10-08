@@ -6,7 +6,7 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
       replace: true,
       template: "<div class=\"col-md-8 col-md-push-2\" style=\"text-align:center;\">     <list-header class=\"col-md-12\"></list-header>     <loading-div loading=\"list\">         <model-table></model-table>     </loading-div> </div>",
       scope: {type: "@"},
-      controller: function($scope, $location, CrudApiService, FrontEndCrudService, LoadingTrackerService) {
+      controller: function($scope, $location, CrudApiService, FrontEndCrudService, LoadingTrackerService, KaoRecords) {
         var frontEndCrud;
         if ($scope.type) {
           frontEndCrud = FrontEndCrudService.getFrontEndFor($scope.type);
@@ -24,7 +24,7 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
           $location.path(path);
         };
         $scope.getRecordEditUrl = function(record) {
-          return "#" + frontEndCrud.getEditUrl(record.id);
+          return "#" + record.getEditUrl();
         };
         $scope.delete = function(id) {
           crudApi.delete(id).success(function(data) {
@@ -34,8 +34,8 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
           });
         };
         $scope.getRecords = function() {
-          tracker.load(crudApi.getAll()).success(function(data) {
-            $scope.records = data.records;
+          tracker.load(KaoRecords.all(frontEndCrud.name, crudApi)).success(function(records) {
+            $scope.records = records;
           }).error(function(error) {
             console.log(error);
           });

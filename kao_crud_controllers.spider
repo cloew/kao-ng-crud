@@ -15,7 +15,7 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
         scope: {
             type: '@'
         },
-        controller: fn ($scope, $location, CrudApiService, FrontEndCrudService, LoadingTrackerService) {
+        controller: fn ($scope, $location, CrudApiService, FrontEndCrudService, LoadingTrackerService, KaoRecords) {
             var frontEndCrud;
             if $scope.type {
                 frontEndCrud = FrontEndCrudService.getFrontEndFor($scope.type);
@@ -36,7 +36,7 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
             };
             
             $scope.getRecordEditUrl = fn(record) {
-                return '#'+frontEndCrud.getEditUrl(record.id);
+                return '#'+record.getEditUrl();
             };
             
             $scope.delete = fn(id) {
@@ -48,8 +48,8 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
             };
             
             $scope.getRecords = fn() {
-                tracker.load(crudApi.getAll()).success(fn(data) {
-                    $scope.records = data.records;
+                tracker.load(KaoRecords.all(frontEndCrud.name, crudApi)).success(fn(records) {
+                    $scope.records = records;
                 }).error(fn(error) {
                     console.log(error);
                 });
