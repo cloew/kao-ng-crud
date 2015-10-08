@@ -73,12 +73,12 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
             $scope.record = new KaoRecord($scope.type);
             $scope.dataType = $scope.record.frontEndCrud.name;
             $scope.formDirective = $scope.record.frontEndCrud.formDirective;
-            $scope.listUrl = '#'+$scope.record.frontEndCrud.getListUrl();
+            $scope.listUrl = '#'+$scope.record.getListUrl();
             var tracker = LoadingTrackerService.get('saving');
             
             $scope.save = fn() {
                 tracker.load($scope.record.create()).success(fn(record) {
-                    $location.path(record.frontEndCrud.getEditUrl(record.data.id));
+                    $location.path(record.getEditUrl());
                 }).error(fn(error) {
                     console.log(error);
                 });
@@ -103,7 +103,7 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
             $scope.dataType = $scope.record.frontEndCrud.name;
             $scope.formDirective = $scope.record.frontEndCrud.formDirective;
             $scope.afterEditDirective = $scope.record.frontEndCrud.afterEditDirective;
-            $scope.listUrl = '#'+$scope.record.frontEndCrud.getListUrl();
+            $scope.listUrl = '#'+$scope.record.getListUrl();
             
             var tracker = LoadingTrackerService.get('saving');
             
@@ -119,7 +119,7 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
             
             $scope.delete = fn(id) {
                 $scope.record.delete().success(fn(record) {
-                    $scope.goTo(record.frontEndCrud.getListUrl());
+                    $scope.goTo(record.getListUrl());
                 }).error(fn(error) {
                     console.log(error);
                 });

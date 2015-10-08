@@ -38,5 +38,16 @@ angular.module('kao.crud.record', ['kao.crud.api', 'kao.crud.frontend', 'kao.loa
                 }), fn(data) {return self;}
             );
         };
+        
+        KaoRecord.prototype.getListUrl = fn() {
+            return this.frontEndCrud.getListUrl();
+        };
+        
+        KaoRecord.prototype.getNewUrl = fn() {
+            return this.frontEndCrud.getNewUrl();
+        };
+        KaoRecord.prototype.getEditUrl = fn() {
+            return this.frontEndCrud.getEditUrl(this.data.id);
+        };
         return KaoRecord;
     });

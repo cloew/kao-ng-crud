@@ -53,11 +53,11 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
         $scope.record = new KaoRecord($scope.type);
         $scope.dataType = $scope.record.frontEndCrud.name;
         $scope.formDirective = $scope.record.frontEndCrud.formDirective;
-        $scope.listUrl = "#" + $scope.record.frontEndCrud.getListUrl();
+        $scope.listUrl = "#" + $scope.record.getListUrl();
         var tracker = LoadingTrackerService.get("saving");
         $scope.save = function() {
           tracker.load($scope.record.create()).success(function(record) {
-            $location.path(record.frontEndCrud.getEditUrl(record.data.id));
+            $location.path(record.getEditUrl());
           }).error(function(error) {
             console.log(error);
           });
@@ -75,7 +75,7 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
         $scope.dataType = $scope.record.frontEndCrud.name;
         $scope.formDirective = $scope.record.frontEndCrud.formDirective;
         $scope.afterEditDirective = $scope.record.frontEndCrud.afterEditDirective;
-        $scope.listUrl = "#" + $scope.record.frontEndCrud.getListUrl();
+        $scope.listUrl = "#" + $scope.record.getListUrl();
         var tracker = LoadingTrackerService.get("saving");
         $scope.goTo = function(path) {
           $location.path(path);
@@ -87,7 +87,7 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
         };
         $scope.delete = function(id) {
           $scope.record.delete().success(function(record) {
-            $scope.goTo(record.frontEndCrud.getListUrl());
+            $scope.goTo(record.getListUrl());
           }).error(function(error) {
             console.log(error);
           });

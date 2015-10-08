@@ -35,6 +35,15 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
         return self;
       });
     };
+    KaoRecord.prototype.getListUrl = function() {
+      return this.frontEndCrud.getListUrl();
+    };
+    KaoRecord.prototype.getNewUrl = function() {
+      return this.frontEndCrud.getNewUrl();
+    };
+    KaoRecord.prototype.getEditUrl = function() {
+      return this.frontEndCrud.getEditUrl(this.data.id);
+    };
     return KaoRecord;
   });
   return {};
