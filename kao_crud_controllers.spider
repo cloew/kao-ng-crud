@@ -15,21 +15,15 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
         scope: {
             type: '@'
         },
-        controller: fn ($scope, $location, CrudApiService, FrontEndCrudService, LoadingTrackerService, KaoRecords) {
-            var frontEndCrud;
-            if $scope.type {
-                frontEndCrud = FrontEndCrudService.getFrontEndFor($scope.type);
-            } else {
-                frontEndCrud = FrontEndCrudService.getCurrentCrud();
-            }
-            var crudApi = CrudApiService.getApiFor(frontEndCrud.name);
+        controller: fn ($scope, $location, LoadingTrackerService, KaoRecords) {
+            var recordsHelper = new KaoRecords($scope.type);
             var tracker =  LoadingTrackerService.get('list');
             
             $scope.records = [];
-            $scope.dataType = frontEndCrud.name;
-            $scope.pluralDataType = frontEndCrud.pluralName;
-            $scope.newUrl = '#'+frontEndCrud.getNewUrl();
-            $scope.tableDirective = frontEndCrud.tableDirective;
+            $scope.dataType = recordsHelper.frontEndCrud.name;
+            $scope.pluralDataType = recordsHelper.frontEndCrud.pluralName;
+            $scope.newUrl = '#'+recordsHelper.frontEndCrud.getNewUrl();
+            $scope.tableDirective = recordsHelper.frontEndCrud.tableDirective;
             
             $scope.goTo = fn(path) {
                 $location.path(path);
@@ -40,7 +34,7 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
             };
             
             $scope.delete = fn(id) {
-                crudApi.delete(id).success(fn(data) {
+                recordsHelper.crudApi.delete(id).success(fn(data) {
                     $scope.getRecords();
                 }).error(fn(error) {
                     console.log(error);
@@ -48,7 +42,7 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
             };
             
             $scope.getRecords = fn() {
-                tracker.load(KaoRecords.all(frontEndCrud.name, crudApi)).success(fn(records) {
+                tracker.load(recordsHelper.all()).success(fn(records) {
                     $scope.records = records;
                 }).error(fn(error) {
                     console.log(error);

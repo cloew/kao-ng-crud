@@ -56,6 +56,12 @@ angular.module('kao.crud.frontend', ['kao.crud.api', 'kao.utils', 'kao.loading']
     .factory('FrontEndCrudService', fn($route, FrontEndCrud, FrontEndCrudConfig) {
         var dataTypeToWrapper = {};
         var pathToWrappers = {};
+        var getCurrentCrud = fn() {
+            return pathToWrappers[$route.current.$$route.path];
+        };
+        var getFrontEndFor = fn(dataType) {
+            return dataTypeToWrapper[dataType];
+        };
         var service = {
             addCrud: fn(config) {
                 dataTypeToWrapper[config.name] = config;
@@ -71,12 +77,15 @@ angular.module('kao.crud.frontend', ['kao.crud.api', 'kao.utils', 'kao.loading']
                     }
                 }
             },
-            getCurrentCrud: fn() {
-                return pathToWrappers[$route.current.$$route.path];
+            retrieve: fn(dataType) {
+                if dataType? {
+                    return getFrontEndFor(dataType);
+                } else {
+                    return getCurrentCrud();
+                }
             },
-            getFrontEndFor: fn(dataType) {
-                return dataTypeToWrapper[dataType];
-            }
+            getCurrentCrud: getCurrentCrud,
+            getFrontEndFor: getFrontEndFor
         };
         for config in FrontEndCrudConfig {
             service.addCrud( new FrontEndCrud(config));

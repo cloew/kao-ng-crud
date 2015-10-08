@@ -2,13 +2,18 @@ use angular;
 use console;
 
 angular.module('kao.crud.record', ['kao.crud.api', 'kao.crud.frontend', 'kao.loading', 'kao.utils'])
-    .service('KaoRecords', fn(KaoRecord, KaoDefer) {
-        this.all = fn(type, crudApi) {
+    .factory('KaoRecords', fn(KaoRecord, CrudApiService, FrontEndCrudService, KaoDefer) {
+        var KaoRecords = fn(dataType) {
+            this.frontEndCrud = FrontEndCrudService.retrieve(dataType);
+            this.crudApi = CrudApiService.getApiFor(this.frontEndCrud.name);
+        };
+        KaoRecords.prototype.all = fn() {
             var deferred = KaoDefer();
-            crudApi.getAll().success(fn(data) {
+            var self = this;
+            this.crudApi.getAll().success(fn(data) {
                 var records = [];
                 for recordData in data.records {
-                    records <- new KaoRecord(type, recordData);
+                    records <- new KaoRecord(self.frontEndCrud.name, recordData);
                 }
                 deferred.resolve(records);
             }).error(fn(error) {
@@ -16,14 +21,11 @@ angular.module('kao.crud.record', ['kao.crud.api', 'kao.crud.frontend', 'kao.loa
             });
             return deferred.promise;
         };
+        return KaoRecords;
     })
     .factory('KaoRecord', fn($routeParams, CrudApiService, FrontEndCrudService, KaoPromise) {
         var KaoRecord = fn(dataType, data) {
-            if dataType? {
-                this.frontEndCrud = FrontEndCrudService.getFrontEndFor(dataType);
-            } else {
-                this.frontEndCrud = FrontEndCrudService.getCurrentCrud();
-            }
+            this.frontEndCrud = FrontEndCrudService.retrieve(dataType);
             this.crudApi = CrudApiService.getApiFor(this.frontEndCrud.name);
             this.data = data ?? {};
         };

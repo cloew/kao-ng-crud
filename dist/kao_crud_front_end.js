@@ -57,6 +57,12 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
   }).factory("FrontEndCrudService", function($route, FrontEndCrud, FrontEndCrudConfig) {
     var dataTypeToWrapper = {};
     var pathToWrappers = {};
+    var getCurrentCrud = function() {
+      return pathToWrappers[$route.current.$$route.path];
+    };
+    var getFrontEndFor = function(dataType) {
+      return dataTypeToWrapper[dataType];
+    };
     var service = {
       addCrud: function(config) {
         dataTypeToWrapper[config.name] = config;
@@ -76,12 +82,15 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
           }
         }
       },
-      getCurrentCrud: function() {
-        return pathToWrappers[$route.current.$$route.path];
+      retrieve: function(dataType) {
+        if (typeof dataType !== "undefined" && dataType !== null) {
+          return getFrontEndFor(dataType);
+        } else {
+          return getCurrentCrud();
+        }
       },
-      getFrontEndFor: function(dataType) {
-        return dataTypeToWrapper[dataType];
-      }
+      getCurrentCrud: getCurrentCrud,
+      getFrontEndFor: getFrontEndFor
     };
     for (var $__0 = FrontEndCrudConfig[$traceurRuntime.toProperty(Symbol.iterator)](),
         $__1; !($__1 = $__0.next()).done; ) {

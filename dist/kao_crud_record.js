@@ -1,15 +1,20 @@
 $traceurRuntime.ModuleStore.getAnonymousModule(function() {
   "use strict";
-  angular.module("kao.crud.record", ["kao.crud.api", "kao.crud.frontend", "kao.loading", "kao.utils"]).service("KaoRecords", function(KaoRecord, KaoDefer) {
-    this.all = function(type, crudApi) {
+  angular.module("kao.crud.record", ["kao.crud.api", "kao.crud.frontend", "kao.loading", "kao.utils"]).factory("KaoRecords", function(KaoRecord, CrudApiService, FrontEndCrudService, KaoDefer) {
+    var KaoRecords = function(dataType) {
+      this.frontEndCrud = FrontEndCrudService.retrieve(dataType);
+      this.crudApi = CrudApiService.getApiFor(this.frontEndCrud.name);
+    };
+    KaoRecords.prototype.all = function() {
       var deferred = KaoDefer();
-      crudApi.getAll().success(function(data) {
+      var self = this;
+      this.crudApi.getAll().success(function(data) {
         var records = [];
         for (var $__0 = data.records[$traceurRuntime.toProperty(Symbol.iterator)](),
             $__1; !($__1 = $__0.next()).done; ) {
           var recordData = $__1.value;
           {
-            records.push(new KaoRecord(type, recordData));
+            records.push(new KaoRecord(self.frontEndCrud.name, recordData));
           }
         }
         deferred.resolve(records);
@@ -18,13 +23,10 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
       });
       return deferred.promise;
     };
+    return KaoRecords;
   }).factory("KaoRecord", function($routeParams, CrudApiService, FrontEndCrudService, KaoPromise) {
     var KaoRecord = function(dataType, data) {
-      if (typeof dataType !== "undefined" && dataType !== null) {
-        this.frontEndCrud = FrontEndCrudService.getFrontEndFor(dataType);
-      } else {
-        this.frontEndCrud = FrontEndCrudService.getCurrentCrud();
-      }
+      this.frontEndCrud = FrontEndCrudService.retrieve(dataType);
       this.crudApi = CrudApiService.getApiFor(this.frontEndCrud.name);
       this.data = typeof data === "undefined" || data == null ? {} : data;
     };
