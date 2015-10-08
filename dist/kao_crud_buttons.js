@@ -4,12 +4,7 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
     return {
       restrict: "E",
       replace: true,
-      scope: {
-        deleteMethod: "=",
-        id: "=",
-        dataType: "@"
-      },
-      template: "<button ng-click=\"deleteMethod(id)\" class=\"btn btn-primary\">     <span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>     <span class=\"sr-only\">Delete {{dataType}}</span> </button>"
+      template: "<button ng-click=\"delete(record)\" class=\"btn btn-primary\">     <span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>     <span class=\"sr-only\">Delete {{dataType}}</span> </button>"
     };
   }).directive("saveButton", function() {
     return {

@@ -17,8 +17,8 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
         $scope.goTo = function(path) {
           $location.path(path);
         };
-        $scope.delete = function(id) {
-          recordsHelper.crudApi.delete(id).success(function(data) {
+        $scope.delete = function(record) {
+          record.delete().success(function(data) {
             $scope.getRecords();
           }).error(function(error) {
             console.log(error);
@@ -76,8 +76,8 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
             console.log(error);
           });
         };
-        $scope.delete = function(id) {
-          $scope.record.delete().success(function(record) {
+        $scope.delete = function(record) {
+          record.delete().success(function(record) {
             $scope.goTo(record.getListUrl());
           }).error(function(error) {
             console.log(error);

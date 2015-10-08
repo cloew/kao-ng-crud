@@ -29,8 +29,8 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
                 $location.path(path);
             };
             
-            $scope.delete = fn(id) {
-                recordsHelper.crudApi.delete(id).success(fn(data) {
+            $scope.delete = fn(record) {
+                record.delete().success(fn(data) {
                     $scope.getRecords();
                 }).error(fn(error) {
                     console.log(error);
@@ -107,8 +107,8 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
                 });
             };
             
-            $scope.delete = fn(id) {
-                $scope.record.delete().success(fn(record) {
+            $scope.delete = fn(record) {
+                record.delete().success(fn(record) {
                     $scope.goTo(record.getListUrl());
                 }).error(fn(error) {
                     console.log(error);
