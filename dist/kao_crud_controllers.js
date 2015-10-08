@@ -54,11 +54,10 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
         $scope.dataType = $scope.record.frontEndCrud.name;
         $scope.formDirective = $scope.record.frontEndCrud.formDirective;
         $scope.listUrl = "#" + $scope.record.frontEndCrud.getListUrl();
-        console.log($scope.listUrl);
         var tracker = LoadingTrackerService.get("saving");
         $scope.save = function() {
-          tracker.load($scope.record.crudApi.create($scope.record.data)).success(function(data) {
-            $location.path($scope.record.frontEndCrud.getEditUrl(data.record.id));
+          tracker.load($scope.record.create()).success(function(record) {
+            $location.path(record.frontEndCrud.getEditUrl(record.data.id));
           }).error(function(error) {
             console.log(error);
           });
@@ -82,20 +81,20 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
           $location.path(path);
         };
         $scope.save = function() {
-          tracker.load($scope.record.crudApi.update($scope.record)).success(function(data) {
-            $scope.record.data = data.record;
-          }).error(function(error) {
+          tracker.load($scope.record.update()).error(function(error) {
             console.log(error);
           });
         };
         $scope.delete = function(id) {
-          $scope.record.crudApi.delete($routeParams.id).success(function(data) {
-            $scope.goTo($scope.record.frontEndCrud.getListUrl());
+          $scope.record.delete().success(function(record) {
+            $scope.goTo(record.frontEndCrud.getListUrl());
           }).error(function(error) {
             console.log(error);
           });
         };
-        $scope.record.load();
+        $scope.record.get().error(function(error) {
+          console.log(error);
+        });
       }
     };
   });

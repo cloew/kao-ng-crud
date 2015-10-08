@@ -74,12 +74,11 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
             $scope.dataType = $scope.record.frontEndCrud.name;
             $scope.formDirective = $scope.record.frontEndCrud.formDirective;
             $scope.listUrl = '#'+$scope.record.frontEndCrud.getListUrl();
-            console.log($scope.listUrl);
             var tracker = LoadingTrackerService.get('saving');
             
             $scope.save = fn() {
-                tracker.load($scope.record.crudApi.create($scope.record.data)).success(fn(data) {
-                    $location.path($scope.record.frontEndCrud.getEditUrl(data.record.id));
+                tracker.load($scope.record.create()).success(fn(record) {
+                    $location.path(record.frontEndCrud.getEditUrl(record.data.id));
                 }).error(fn(error) {
                     console.log(error);
                 });
@@ -113,21 +112,21 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
             };
             
             $scope.save = fn() {
-                tracker.load($scope.record.crudApi.update($scope.record)).success(fn(data) {
-                    $scope.record.data = data.record;
-                }).error(fn(error) {
+                tracker.load($scope.record.update()).error(fn(error) {
                     console.log(error);
                 });
             };
             
             $scope.delete = fn(id) {
-                $scope.record.crudApi.delete($routeParams.id).success(fn(data) {
-                    $scope.goTo($scope.record.frontEndCrud.getListUrl());
+                $scope.record.delete().success(fn(record) {
+                    $scope.goTo(record.frontEndCrud.getListUrl());
                 }).error(fn(error) {
                     console.log(error);
                 });
             };
-            $scope.record.load();
+            $scope.record.get().error(fn(error) {
+                console.log(error);
+            });
         }
       };
     });

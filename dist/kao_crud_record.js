@@ -1,6 +1,6 @@
 $traceurRuntime.ModuleStore.getAnonymousModule(function() {
   "use strict";
-  angular.module("kao.crud.record", ["kao.crud.api", "kao.crud.frontend", "kao.loading"]).factory("KaoRecord", function($routeParams, CrudApiService, FrontEndCrudService) {
+  angular.module("kao.crud.record", ["kao.crud.api", "kao.crud.frontend", "kao.loading", "kao.utils"]).factory("KaoRecord", function($routeParams, CrudApiService, FrontEndCrudService, KaoPromise) {
     var KaoRecord = function(dataType) {
       if (typeof dataType !== "undefined" && dataType !== null) {
         this.frontEndCrud = FrontEndCrudService.getFrontEndFor(dataType);
@@ -10,12 +10,29 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
       this.crudApi = CrudApiService.getApiFor(this.frontEndCrud.name);
       this.data = {};
     };
-    KaoRecord.prototype.load = function() {
+    KaoRecord.prototype.promiseBuilder = function(promise) {
       var self = this;
-      this.crudApi.get($routeParams.id).success(function(data) {
+      return KaoPromise(promise.success(function(data) {
         self.data = data.record;
-      }).error(function(error) {
-        console.log(error);
+      }), function(data) {
+        return self;
+      });
+    };
+    KaoRecord.prototype.get = function() {
+      return this.promiseBuilder(this.crudApi.get($routeParams.id));
+    };
+    KaoRecord.prototype.create = function() {
+      return this.promiseBuilder(this.crudApi.create(this.data));
+    };
+    KaoRecord.prototype.update = function() {
+      return this.promiseBuilder(this.crudApi.update(this.data));
+    };
+    KaoRecord.prototype.delete = function() {
+      var self = this;
+      return KaoPromise(this.crudApi.get(this.data.id).success(function(data) {
+        self.data = {};
+      }), function(data) {
+        return self;
       });
     };
     return KaoRecord;
