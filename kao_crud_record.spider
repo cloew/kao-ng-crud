@@ -1,0 +1,25 @@
+use angular;
+use console;
+
+angular.module('kao.crud.record', ['kao.crud.api', 'kao.crud.frontend', 'kao.loading'])
+    .factory('KaoRecord', fn($routeParams, CrudApiService, FrontEndCrudService) {
+        var KaoRecord = fn(dataType) {
+            if dataType? {
+                this.frontEndCrud = FrontEndCrudService.getFrontEndFor(dataType);
+            } else {
+                this.frontEndCrud = FrontEndCrudService.getCurrentCrud();
+            }
+            this.crudApi = CrudApiService.getApiFor(this.frontEndCrud.name);
+            this.data = {};
+        };
+            
+        KaoRecord.prototype.load = fn() {
+            var self = this;
+            this.crudApi.get($routeParams.id).success(fn(data) {
+                self.data = data.record;
+            }).error(fn(error) {
+                console.log(error);
+            });
+        };
+        return KaoRecord;
+    });
