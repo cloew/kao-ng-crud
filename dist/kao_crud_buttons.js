@@ -10,7 +10,7 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
     return {
       restrict: "E",
       replace: true,
-      template: "<div>     <loading-button loading=\"saving\" data-loading-text=\"Saving\" type=\"submit\" ng-click=\"save()\" class=\"btn btn-default btn-primary\">Save</loading-button> </div>"
+      template: "<div>     <loading-button tracker=\"saveTracker\" data-loading-text=\"Saving\" type=\"submit\" ng-click=\"save()\" class=\"btn btn-default btn-primary\">Save</loading-button> </div>"
     };
   });
   return {};

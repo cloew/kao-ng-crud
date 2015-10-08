@@ -8,16 +8,16 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
         replace: true,
         template:  '<div class="col-md-8 col-md-push-2" style="text-align:center;">
                         <list-header class="col-md-12"></list-header>
-                        <loading-div loading="list">
+                        <loading-div tracker="listTracker">
                             <model-table></model-table>
                         </loading-div>
                     </div>',
         scope: {
             type: '@'
         },
-        controller: fn ($scope, $location, LoadingTrackerService, KaoRecords) {
+        controller: fn ($scope, $location, LoadingTracker, KaoRecords) {
             var recordsHelper = new KaoRecords($scope.type);
-            var tracker =  LoadingTrackerService.get('list');
+            $scope.listTracker = new LoadingTracker();
             
             $scope.records = [];
             $scope.dataType = recordsHelper.frontEndCrud.name;
@@ -38,7 +38,7 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
             };
             
             $scope.getRecords = fn() {
-                tracker.load(recordsHelper.all()).success(fn(records) {
+                $scope.listTracker.load(recordsHelper.all()).success(fn(records) {
                     $scope.records = records;
                 }).error(fn(error) {
                     console.log(error);
@@ -59,15 +59,16 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
         scope: {
             type: '@'
         },
-        controller: fn ($scope, $location, KaoRecord, LoadingTrackerService) {
+        controller: fn ($scope, $location, KaoRecord, LoadingTracker) {
             $scope.record = new KaoRecord($scope.type);
             $scope.dataType = $scope.record.frontEndCrud.name;
             $scope.formDirective = $scope.record.frontEndCrud.formDirective;
             $scope.listUrl = '#'+$scope.record.getListUrl();
-            var tracker = LoadingTrackerService.get('saving');
+            
+            $scope.saveTracker = new LoadingTracker();
             
             $scope.save = fn() {
-                tracker.load($scope.record.create()).success(fn(record) {
+                $scope.saveTracker.load($scope.record.create()).success(fn(record) {
                     $location.path(record.getEditUrl());
                 }).error(fn(error) {
                     console.log(error);
@@ -88,21 +89,22 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
         scope: {
             type: '@'
         },
-        controller: fn ($scope, $location, $routeParams, KaoRecord, LoadingTrackerService) {
+        controller: fn ($scope, $location, $routeParams, KaoRecord, LoadingTracker) {
             $scope.record = new KaoRecord($scope.type);
             $scope.dataType = $scope.record.frontEndCrud.name;
             $scope.formDirective = $scope.record.frontEndCrud.formDirective;
             $scope.afterEditDirective = $scope.record.frontEndCrud.afterEditDirective;
             $scope.listUrl = '#'+$scope.record.getListUrl();
             
-            var tracker = LoadingTrackerService.get('saving');
+            $scope.saveTracker = new LoadingTracker();
+            
             
             $scope.goTo = fn(path) {
                 $location.path(path);
             };
             
             $scope.save = fn() {
-                tracker.load($scope.record.update()).error(fn(error) {
+                $scope.saveTracker.load($scope.record.update()).error(fn(error) {
                     console.log(error);
                 });
             };

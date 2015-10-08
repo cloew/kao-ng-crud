@@ -1,7 +1,7 @@
 use angular;
 use console;
 
-angular.module('kao.crud.frontend', ['kao.crud.api', 'kao.utils', 'kao.loading'])
+angular.module('kao.crud.frontend', ['kao.crud.api', 'kao.utils'])
     .provider('FrontEndCrudConfig', fn() {
         var crudConfigs = [];
         this.add = fn(config) {

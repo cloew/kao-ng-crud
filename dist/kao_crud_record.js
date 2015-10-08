@@ -1,6 +1,6 @@
 $traceurRuntime.ModuleStore.getAnonymousModule(function() {
   "use strict";
-  angular.module("kao.crud.record", ["kao.crud.api", "kao.crud.frontend", "kao.loading", "kao.utils"]).factory("KaoRecords", function(KaoRecord, CrudApiService, FrontEndCrudService, KaoDefer) {
+  angular.module("kao.crud.record", ["kao.crud.api", "kao.crud.frontend", "kao.utils"]).factory("KaoRecords", function(KaoRecord, CrudApiService, FrontEndCrudService, KaoDefer) {
     var KaoRecords = function(dataType) {
       this.frontEndCrud = FrontEndCrudService.retrieve(dataType);
       this.crudApi = CrudApiService.getApiFor(this.frontEndCrud.name);

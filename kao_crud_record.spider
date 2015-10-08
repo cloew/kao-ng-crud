@@ -1,7 +1,7 @@
 use angular;
 use console;
 
-angular.module('kao.crud.record', ['kao.crud.api', 'kao.crud.frontend', 'kao.loading', 'kao.utils'])
+angular.module('kao.crud.record', ['kao.crud.api', 'kao.crud.frontend', 'kao.utils'])
     .factory('KaoRecords', fn(KaoRecord, CrudApiService, FrontEndCrudService, KaoDefer) {
         var KaoRecords = fn(dataType) {
             this.frontEndCrud = FrontEndCrudService.retrieve(dataType);

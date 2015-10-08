@@ -4,11 +4,11 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
     return {
       restrict: "E",
       replace: true,
-      template: "<div class=\"col-md-8 col-md-push-2\" style=\"text-align:center;\">     <list-header class=\"col-md-12\"></list-header>     <loading-div loading=\"list\">         <model-table></model-table>     </loading-div> </div>",
+      template: "<div class=\"col-md-8 col-md-push-2\" style=\"text-align:center;\">     <list-header class=\"col-md-12\"></list-header>     <loading-div tracker=\"listTracker\">         <model-table></model-table>     </loading-div> </div>",
       scope: {type: "@"},
-      controller: function($scope, $location, LoadingTrackerService, KaoRecords) {
+      controller: function($scope, $location, LoadingTracker, KaoRecords) {
         var recordsHelper = new KaoRecords($scope.type);
-        var tracker = LoadingTrackerService.get("list");
+        $scope.listTracker = new LoadingTracker();
         $scope.records = [];
         $scope.dataType = recordsHelper.frontEndCrud.name;
         $scope.pluralDataType = recordsHelper.frontEndCrud.pluralName;
@@ -25,7 +25,7 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
           });
         };
         $scope.getRecords = function() {
-          tracker.load(recordsHelper.all()).success(function(records) {
+          $scope.listTracker.load(recordsHelper.all()).success(function(records) {
             $scope.records = records;
           }).error(function(error) {
             console.log(error);
@@ -40,14 +40,14 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
       replace: true,
       template: "<div class=\"col-md-8 col-md-push-2\" style=\"text-align:center;\">     <new-header class=\"col-md-12\"></new-header>     <model-form></model-form> </div>",
       scope: {type: "@"},
-      controller: function($scope, $location, KaoRecord, LoadingTrackerService) {
+      controller: function($scope, $location, KaoRecord, LoadingTracker) {
         $scope.record = new KaoRecord($scope.type);
         $scope.dataType = $scope.record.frontEndCrud.name;
         $scope.formDirective = $scope.record.frontEndCrud.formDirective;
         $scope.listUrl = "#" + $scope.record.getListUrl();
-        var tracker = LoadingTrackerService.get("saving");
+        $scope.saveTracker = new LoadingTracker();
         $scope.save = function() {
-          tracker.load($scope.record.create()).success(function(record) {
+          $scope.saveTracker.load($scope.record.create()).success(function(record) {
             $location.path(record.getEditUrl());
           }).error(function(error) {
             console.log(error);
@@ -61,18 +61,18 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
       replace: true,
       template: "<div class=\"col-md-8 col-md-push-2\" style=\"text-align:center;\">     <edit-header class=\"col-md-12\"></edit-header>     <model-form></model-form>     <dynamic-directive directive=\"{{afterEditDirective}}\"></dynamic-directive> </div>",
       scope: {type: "@"},
-      controller: function($scope, $location, $routeParams, KaoRecord, LoadingTrackerService) {
+      controller: function($scope, $location, $routeParams, KaoRecord, LoadingTracker) {
         $scope.record = new KaoRecord($scope.type);
         $scope.dataType = $scope.record.frontEndCrud.name;
         $scope.formDirective = $scope.record.frontEndCrud.formDirective;
         $scope.afterEditDirective = $scope.record.frontEndCrud.afterEditDirective;
         $scope.listUrl = "#" + $scope.record.getListUrl();
-        var tracker = LoadingTrackerService.get("saving");
+        $scope.saveTracker = new LoadingTracker();
         $scope.goTo = function(path) {
           $location.path(path);
         };
         $scope.save = function() {
-          tracker.load($scope.record.update()).error(function(error) {
+          $scope.saveTracker.load($scope.record.update()).error(function(error) {
             console.log(error);
           });
         };

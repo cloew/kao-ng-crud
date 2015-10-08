@@ -1,6 +1,6 @@
 $traceurRuntime.ModuleStore.getAnonymousModule(function() {
   "use strict";
-  angular.module("kao.crud.frontend", ["kao.crud.api", "kao.utils", "kao.loading"]).provider("FrontEndCrudConfig", function() {
+  angular.module("kao.crud.frontend", ["kao.crud.api", "kao.utils"]).provider("FrontEndCrudConfig", function() {
     var crudConfigs = [];
     this.add = function(config) {
       crudConfigs.push(config);
