@@ -1,0 +1,29 @@
+#! /usr/bin/bash
+
+function mk-dst-dir {
+    dstDir=$1;
+    if [ ! -d "$dstDir" ]; then
+        mkdir $dstDir
+    fi
+}
+
+function compile-spider  {
+    srcDir=$1;
+    dstDir=$2;
+    
+    mk-dst-dir $dstDir
+
+    for filename in $srcDir/*.spider;
+    do
+        if [[ $filename != _* ]]
+          then
+            spider -c $filename;
+        fi
+    done
+        
+    mv $srcDir/*.js $dstDir
+    rm $srcDir/*.map
+}
+
+echo "Compiling Spider Scripts"
+compile-spider . dist/
