@@ -17,9 +17,6 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
         $scope.goTo = function(path) {
           $location.path(path);
         };
-        $scope.getRecordEditUrl = function(record) {
-          return "#" + record.getEditUrl();
-        };
         $scope.delete = function(id) {
           recordsHelper.crudApi.delete(id).success(function(data) {
             $scope.getRecords();

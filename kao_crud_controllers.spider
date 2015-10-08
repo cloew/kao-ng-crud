@@ -29,10 +29,6 @@ angular.module('kao.crud.controllers', ['kao.crud.directives', 'kao.crud.record'
                 $location.path(path);
             };
             
-            $scope.getRecordEditUrl = fn(record) {
-                return '#'+record.getEditUrl();
-            };
-            
             $scope.delete = fn(id) {
                 recordsHelper.crudApi.delete(id).success(fn(data) {
                     $scope.getRecords();
