@@ -103,5 +103,3 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
   });
   return {};
 });
-
-//# sourceMappingURL=kao_crud_front_end.map

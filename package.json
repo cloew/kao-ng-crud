@@ -1,0 +1,23 @@
+{
+  "name": "kao-ng-crud",
+  "version": "0.0.0",
+  "description": "Helper library to deal with standard crud rest commands and standard pages",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cloew/kao-ng-crud.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cloew/kao-ng-crud/issues"
+  },
+  "homepage": "https://github.com/cloew/kao-ng-crud#readme",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-spider-script": "0.0.9"
+  }
+}
