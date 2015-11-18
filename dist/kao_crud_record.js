@@ -49,7 +49,7 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
     };
     KaoRecord.prototype.delete = function() {
       var self = this;
-      return KaoPromise(this.crudApi.get(this.data.id).success(function(data) {
+      return KaoPromise(this.crudApi.delete(this.data.id).success(function(data) {
         self.data = {};
       }), function(data) {
         return self;

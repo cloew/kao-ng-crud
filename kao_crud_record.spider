@@ -50,7 +50,7 @@ angular.module('kao.crud.record', ['kao.crud.api', 'kao.crud.frontend', 'kao.uti
         KaoRecord.prototype.delete = fn() {
             var self = this;
             return KaoPromise(
-                this.crudApi.get(this.data.id).success(fn(data) {
+                this.crudApi.delete(this.data.id).success(fn(data) {
                     self.data = {};
                 }), fn(data) {return self;}
             );

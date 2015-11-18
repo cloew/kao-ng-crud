@@ -19,4 +19,5 @@ module.exports = function(grunt) {
 
     // Default task(s).
     grunt.registerTask('default', ['spider_script']);
+    grunt.registerTask('spider', ['spider_script']);
 };
