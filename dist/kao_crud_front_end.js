@@ -55,6 +55,7 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
     };
     return CrudFrontEnd;
   }).factory("FrontEndCrudService", function($route, FrontEndCrud, FrontEndCrudConfig) {
+    var cruds = [];
     var dataTypeToWrapper = {};
     var pathToWrappers = {};
     var getCurrentCrud = function() {
@@ -65,6 +66,7 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
     };
     var service = {
       addCrud: function(config) {
+        cruds.push(config);
         dataTypeToWrapper[config.name] = config;
         var paths;
         if (config.primaryPaths) {
@@ -88,6 +90,19 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
         } else {
           return getCurrentCrud();
         }
+      },
+      getTopLevelTypes: function() {
+        var topLevelCruds = [];
+        for (var $__0 = cruds[$traceurRuntime.toProperty(Symbol.iterator)](),
+            $__1; !($__1 = $__0.next()).done; ) {
+          var crud = $__1.value;
+          {
+            if (!(typeof crud.nested !== "undefined" && crud.nested !== null)) {
+              topLevelCruds.push(crud);
+            }
+          }
+        }
+        return topLevelCruds;
       },
       getCurrentCrud: getCurrentCrud,
       getFrontEndFor: getFrontEndFor

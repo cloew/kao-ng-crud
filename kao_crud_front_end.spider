@@ -54,6 +54,7 @@ angular.module('kao.crud.frontend', ['kao.crud.api', 'kao.utils'])
         return CrudFrontEnd;
     })
     .factory('FrontEndCrudService', fn($route, FrontEndCrud, FrontEndCrudConfig) {
+        var cruds = [];
         var dataTypeToWrapper = {};
         var pathToWrappers = {};
         var getCurrentCrud = fn() {
@@ -64,6 +65,7 @@ angular.module('kao.crud.frontend', ['kao.crud.api', 'kao.utils'])
         };
         var service = {
             addCrud: fn(config) {
+                cruds <- config;
                 dataTypeToWrapper[config.name] = config;
                 var paths;
                 if config.primaryPaths {
@@ -83,6 +85,15 @@ angular.module('kao.crud.frontend', ['kao.crud.api', 'kao.utils'])
                 } else {
                     return getCurrentCrud();
                 }
+            },
+            getTopLevelTypes: fn() {
+                var topLevelCruds = [];
+                for crud in cruds {
+                    if !crud.nested? {
+                        topLevelCruds <- crud;
+                    }
+                }
+                return topLevelCruds;
             },
             getCurrentCrud: getCurrentCrud,
             getFrontEndFor: getFrontEndFor
