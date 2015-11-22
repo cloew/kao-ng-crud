@@ -102,4 +102,9 @@ angular.module('kao.crud.frontend', ['kao.crud.api', 'kao.utils'])
             service.addCrud( new FrontEndCrud(config));
         }
         return service;
-    });
+    })
+    .run(['$templateCache', fn($templateCache) {
+        $templateCache.put('kao-ng-crud/admin/list_records.html', "<kao-crud-list></kao-crud-list>");
+        $templateCache.put('kao-ng-crud/admin/new_record.html', "<kao-crud-new></kao-crud-new>");
+        $templateCache.put('kao-ng-crud/admin/edit_record.html', "<kao-crud-edit></kao-crud-edit>");
+    }]);

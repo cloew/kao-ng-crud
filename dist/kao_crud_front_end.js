@@ -115,6 +115,10 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
       }
     }
     return service;
-  });
+  }).run(["$templateCache", function($templateCache) {
+    $templateCache.put("kao-ng-crud/admin/list_records.html", "<kao-crud-list></kao-crud-list>");
+    $templateCache.put("kao-ng-crud/admin/new_record.html", "<kao-crud-new></kao-crud-new>");
+    $templateCache.put("kao-ng-crud/admin/edit_record.html", "<kao-crud-edit></kao-crud-edit>");
+  }]);
   return {};
 });
