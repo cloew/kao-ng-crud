@@ -34,7 +34,7 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
     return {
       restrict: "E",
       replace: true,
-      template: "<a ng-href=\"{{listUrl}}\" class=\"btn btn-lg btn-primary\"><span class=\"glyphicon glyphicon-arrow-left\" aria-hidden=\"true\"></span><span>To List</span></a>"
+      template: "<a ng-href=\"{{listUrl}}\" class=\"btn btn-lg btn-primary\"><span class=\"glyphicon glyphicon-arrow-left\" aria-hidden=\"true\"></span><span> To List</span></a>"
     };
   }).directive("toNewPage", function() {
     return {

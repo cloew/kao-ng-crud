@@ -116,7 +116,7 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
     }
     return service;
   }).run(["$templateCache", function($templateCache) {
-    $templateCache.put("kao-ng-crud/admin/admin.html", "<div class=\"col-md-8 col-md-push-2 text-center\">     <div class=\"col-md-12\">        <kao-header header-title=\"Admin\"></kao-header>     </div>     <div class=\"col-md-4\" ng-repeat=\"crud in cruds\">         <a class=\"btn btn-primary btn-lg col-md-10\" ng-href=\"#{{crud.getListUrl()}}\">{{crud.pluralName}}</a>     </div> </div>");
+    $templateCache.put("kao-ng-crud/admin/admin.html", "<div class=\"col-md-8 col-md-push-2 text-center\">     <div class=\"col-md-12\">        <kao-header header-title=\"Admin\"></kao-header>     </div>     <div class=\"col-md-4\" style=\"margin-top: 10px; margin-bottom: 10px;\" ng-repeat=\"crud in cruds\">         <a class=\"btn btn-primary btn-lg col-md-10\" ng-href=\"#{{crud.getListUrl()}}\">{{crud.pluralName}}</a>     </div> </div>");
     $templateCache.put("kao-ng-crud/admin/list_records.html", "<kao-crud-list></kao-crud-list>");
     $templateCache.put("kao-ng-crud/admin/new_record.html", "<kao-crud-new></kao-crud-new>");
     $templateCache.put("kao-ng-crud/admin/edit_record.html", "<kao-crud-edit></kao-crud-edit>");

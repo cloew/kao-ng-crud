@@ -108,7 +108,7 @@ angular.module('kao.crud.frontend', ['kao.crud.api', 'kao.utils'])
                                                                 <div class="col-md-12">
                                                                    <kao-header header-title="Admin"></kao-header>
                                                                 </div>
-                                                                <div class="col-md-4" ng-repeat="crud in cruds">
+                                                                <div class="col-md-4" style="margin-top: 10px; margin-bottom: 10px;" ng-repeat="crud in cruds">
                                                                     <a class="btn btn-primary btn-lg col-md-10" ng-href="#{{crud.getListUrl()}}">{{crud.pluralName}}</a>
                                                                 </div>
                                                             </div>');
