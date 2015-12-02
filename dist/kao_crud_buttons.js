@@ -4,7 +4,24 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
     return {
       restrict: "E",
       replace: true,
-      template: "<button ng-click=\"delete(record)\" class=\"btn btn-primary\">     <span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>     <span class=\"sr-only\">Delete {{dataType}}</span> </button>"
+      scope: {
+        dataType: "@type",
+        action: "&"
+      },
+      link: function(scope, element, attrs) {
+        scope.useAction = attrs instanceof Array ? attrs.indexOf("action") !== -1 : "action" in attrs;
+      },
+      controller: function($scope) {
+        $scope.dataType = $scope.dataType == null ? $scope.$parent.dataType : $scope.dataType;
+        $scope.perform = function() {
+          if ($scope.useAction) {
+            $scope.action();
+          } else {
+            $scope.$parent.delete($scope.$parent.record);
+          }
+        };
+      },
+      template: "<button ng-click=\"perform()\" class=\"btn btn-primary\">     <span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>     <span class=\"sr-only\">Delete {{dataType}}</span> </button>"
     };
   }).directive("saveButton", function() {
     return {

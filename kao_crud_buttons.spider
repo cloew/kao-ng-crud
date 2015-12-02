@@ -6,7 +6,24 @@ angular.module('kao.crud.buttons', ['kao.crud.api', 'kao.loading'])
         return {
             restrict: 'E',
             replace: true,
-            template: '<button ng-click="delete(record)" class="btn btn-primary">
+            scope: {
+                dataType: '@type',
+                action: '&'
+            },
+            link: fn(scope, element, attrs) {
+                scope.useAction = 'action' in attrs;
+            },
+            controller: fn($scope) {
+                $scope.dataType = $scope.dataType ?? $scope.$parent.dataType;
+                $scope.perform = fn() {
+                    if $scope.useAction {
+                        $scope.action();
+                    } else {
+                        $scope.$parent.delete($scope.$parent.record);
+                    }
+                };
+            },
+            template: '<button ng-click="perform()" class="btn btn-primary">
                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                            <span class="sr-only">Delete {{dataType}}</span>
                        </button>'
