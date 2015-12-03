@@ -27,7 +27,25 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
     return {
       restrict: "E",
       replace: true,
-      template: "<div>     <loading-button tracker=\"saveTracker\" data-loading-text=\"Saving\" type=\"submit\" ng-click=\"save()\" class=\"btn btn-default btn-primary\">Save</loading-button> </div>"
+      scope: {
+        action: "&",
+        tracker: "="
+      },
+      link: function(scope, element, attrs) {
+        scope.useAction = attrs instanceof Array ? attrs.indexOf("action") !== -1 : "action" in attrs;
+        scope.useTracker = attrs instanceof Array ? attrs.indexOf("tracker") !== -1 : "tracker" in attrs;
+      },
+      controller: function($scope) {
+        $scope._tracker = $scope.useTracker ? $scope.tracker : $scope.$parent.saveTracker;
+        $scope.perform = function() {
+          if ($scope.useAction) {
+            $scope.action();
+          } else {
+            $scope.$parent.save();
+          }
+        };
+      },
+      template: "<div>     <loading-button tracker=\"_tracker\" data-loading-text=\"Saving\" type=\"submit\" ng-click=\"perform()\" class=\"btn btn-default btn-primary\">Save</loading-button> </div>"
     };
   });
   return {};

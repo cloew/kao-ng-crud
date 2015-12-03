@@ -33,8 +33,26 @@ angular.module('kao.crud.buttons', ['kao.crud.api', 'kao.loading'])
         return {
             restrict: 'E',
             replace: true,
+            scope: {
+                action: '&',
+                tracker: '='
+            },
+            link: fn(scope, element, attrs) {
+                scope.useAction = 'action' in attrs;
+                scope.useTracker = 'tracker' in attrs;
+            },
+            controller: fn($scope) {
+                $scope._tracker = $scope.tracker if $scope.useTracker else $scope.$parent.saveTracker;
+                $scope.perform = fn() {
+                    if $scope.useAction {
+                        $scope.action();
+                    } else {
+                        $scope.$parent.save();
+                    }
+                };
+            },
             template: '<div>
-                           <loading-button tracker="saveTracker" data-loading-text="Saving" type="submit" ng-click="save()" class="btn btn-default btn-primary">Save</loading-button>
+                           <loading-button tracker="_tracker" data-loading-text="Saving" type="submit" ng-click="perform()" class="btn btn-default btn-primary">Save</loading-button>
                        </div>'
         };
     });
